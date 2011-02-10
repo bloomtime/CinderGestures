@@ -7,7 +7,7 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-class CinderGesturesApp : public AppBasic {
+class cinder_gestures_sampleApp : public AppBasic {
   public:
 	
 	GestureHelper mGestureHelper;
@@ -25,30 +25,30 @@ class CinderGesturesApp : public AppBasic {
 	bool doubleTap( DoubleTapEvent event );
 };
 
-void CinderGesturesApp::prepareSettings(Settings *settings)
+void cinder_gestures_sampleApp::prepareSettings(Settings *settings)
 {
 	settings->enableMultiTouch(true);
 	settings->setTitle("Cinder Gestures Test App");
 	on = false;
 }
 
-void CinderGesturesApp::setup()
+void cinder_gestures_sampleApp::setup()
 {	
 	mView.translate(Vec3f(getWindowWidth()/2,getWindowHeight()/2,0));
 	mGestureHelper.setup(this);
-	mGestureHelper.registerPinchBegan(this, &CinderGesturesApp::pinchBegan);
-	mGestureHelper.registerPinchMoved(this, &CinderGesturesApp::pinchMoved);
-	mGestureHelper.registerPinchEnded(this, &CinderGesturesApp::pinchEnded);
-	mGestureHelper.registerDoubleTap(this, &CinderGesturesApp::doubleTap);
+	mGestureHelper.registerPinchBegan(this, &cinder_gestures_sampleApp::pinchBegan);
+	mGestureHelper.registerPinchMoved(this, &cinder_gestures_sampleApp::pinchMoved);
+	mGestureHelper.registerPinchEnded(this, &cinder_gestures_sampleApp::pinchEnded);
+	mGestureHelper.registerDoubleTap(this, &cinder_gestures_sampleApp::doubleTap);
 }
 
-bool CinderGesturesApp::pinchBegan( PinchEvent event )
+bool cinder_gestures_sampleApp::pinchBegan( PinchEvent event )
 {
 	cout << "pinch began" << endl;
 	return false;
 }
 
-bool CinderGesturesApp::pinchMoved( PinchEvent event )
+bool cinder_gestures_sampleApp::pinchMoved( PinchEvent event )
 {
 	cout << "pinch moved" << endl;
 	
@@ -59,23 +59,23 @@ bool CinderGesturesApp::pinchMoved( PinchEvent event )
 	return true; // consumed (does nothing yet)
 }
 
-bool CinderGesturesApp::pinchEnded( PinchEvent event )
+bool cinder_gestures_sampleApp::pinchEnded( PinchEvent event )
 {
 	cout << "pinch ended" << endl;
 	return false;
 }
 
-bool CinderGesturesApp::doubleTap( DoubleTapEvent event )
+bool cinder_gestures_sampleApp::doubleTap( DoubleTapEvent event )
 {
 	// TODO: check location to make sure both taps were near the rectangle?
 	on = !on;
 }
 
-void CinderGesturesApp::update()
+void cinder_gestures_sampleApp::update()
 {
 }
 
-void CinderGesturesApp::draw()
+void cinder_gestures_sampleApp::draw()
 {
 	// clear out the window with black
 	gl::clear( Color( 0, 0, 0 ) ); 
@@ -94,4 +94,4 @@ void CinderGesturesApp::draw()
 }
 
 
-CINDER_APP_BASIC( CinderGesturesApp, RendererGl )
+CINDER_APP_BASIC( cinder_gestures_sampleApp, RendererGl )
