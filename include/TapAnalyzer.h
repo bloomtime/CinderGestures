@@ -4,7 +4,6 @@
  *
  *  Created by Tom Carden on 2/8/11.
  *  Copyright 2011 Bloom Studio Inc. All rights reserved.
- *
  */
 
 #pragma once
@@ -36,8 +35,8 @@ namespace cinder { namespace app {
 				
 	public:		
 		
-		void setup(AppBasic *app) {
-			GestureAnalyzer::setup(app);
+		void init(AppBasic *app) {
+			GestureAnalyzer::init(app);
 			wasSingleTapped = false;
 			prevTouchPos = Vec2f(0,0);
 		}

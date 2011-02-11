@@ -4,7 +4,6 @@
  *
  *  Created by Tom Carden on 2/9/11.
  *  Copyright 2011 Bloom Studio Inc. All rights reserved.
- *
  */
 
 #pragma once
@@ -14,13 +13,16 @@
 
 namespace cinder { namespace app {
 
-	class DoubleTapEvent : public Event {
-	private:
-		Vec2f mPos;
-		double mTime;
-	public:
-		DoubleTapEvent(const Vec2f &pos, const double &t): mPos(pos), mTime(t) {
-		}
-	};
+class DoubleTapEvent : public Event {
+private:
+    
+    Vec2f mPos;
+    double mTime;
+    
+public:
+    
+    DoubleTapEvent(const Vec2f &pos, const double &time): mPos(pos), mTime(time) {}
+    
+};
 
 } }

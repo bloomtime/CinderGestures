@@ -170,10 +170,10 @@
 		E23D4C5F1304AFCD00CCB186 /* include */ = {
 			isa = PBXGroup;
 			children = (
-				E23D4C961304CA0100CCB186 /* SingleTapEvent.h */,
-				E23D4C971304CA0100CCB186 /* TapAnalyzer.h */,
-				E23D4C831304BCCE00CCB186 /* PinchAnalyzer.h */,
 				E23D4C821304BCB300CCB186 /* GestureAnalyzer.h */,
+				E23D4C831304BCCE00CCB186 /* PinchAnalyzer.h */,
+				E23D4C971304CA0100CCB186 /* TapAnalyzer.h */,
+				E23D4C961304CA0100CCB186 /* SingleTapEvent.h */,
 				E23D4C601304AFCD00CCB186 /* DoubleTapEvent.h */,
 				E23D4C621304AFCD00CCB186 /* PinchEvent.h */,
 			);
@@ -296,7 +296,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = i386;
-				CINDER_PATH = ../../../../../Code/Cinder/Cinder;
+				CINDER_PATH = /Users/ryan/Documents/cinder;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "\"$(CINDER_PATH)/boost\"";
@@ -312,7 +312,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = i386;
-				CINDER_PATH = ../../../../../Code/Cinder/Cinder;
+				CINDER_PATH = /Users/ryan/Documents/cinder;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "\"$(CINDER_PATH)/boost\"";
