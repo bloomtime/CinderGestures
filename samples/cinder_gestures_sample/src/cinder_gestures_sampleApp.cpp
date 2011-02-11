@@ -1,7 +1,7 @@
 #include "cinder/app/AppBasic.h"
 #include "cinder/gl/gl.h"
 #include "cinder/Camera.h"
-#include "DoubleTapAnalyzer.h"
+#include "TapAnalyzer.h"
 #include "PinchAnalyzer.h"
 
 using namespace ci;
@@ -12,13 +12,15 @@ class cinder_gestures_sampleApp : public AppBasic {
   public:
 	
 	PinchAnalyzer mPinchAnalyzer;
-	DoubleTapAnalyzer mDoubleTapAnalyzer;
+	TapAnalyzer mTapAnalyzer;
 	
 	Matrix44d mView; // manipulated by pinching
-	bool on; // toggled by double tap
+	bool green; // toggled by double tap
+	bool small; // toggled by single tap
 
 	void setup();
 	void prepareSettings( Settings *settings );
+	void update();
 	void draw();
 	void resize();
 	
@@ -26,6 +28,7 @@ class cinder_gestures_sampleApp : public AppBasic {
 	bool pinchMoved( PinchEvent event );	
 	bool pinchEnded( PinchEvent event );	
 	
+	bool singleTap( SingleTapEvent event );
 	bool doubleTap( DoubleTapEvent event );
 };
 
@@ -33,7 +36,8 @@ void cinder_gestures_sampleApp::prepareSettings(Settings *settings)
 {
 	settings->enableMultiTouch(true);
 	settings->setTitle("Cinder Gestures Test App");
-	on = false;
+	green = false;
+	small = false;
 }
 
 void cinder_gestures_sampleApp::setup()
@@ -46,8 +50,9 @@ void cinder_gestures_sampleApp::setup()
 	mPinchAnalyzer.registerPinchMoved(this, &cinder_gestures_sampleApp::pinchMoved);
 	mPinchAnalyzer.registerPinchEnded(this, &cinder_gestures_sampleApp::pinchEnded);
 	
-	mDoubleTapAnalyzer.setup(this);
-	mDoubleTapAnalyzer.registerDoubleTap(this, &cinder_gestures_sampleApp::doubleTap);
+	mTapAnalyzer.setup(this);
+	mTapAnalyzer.registerSingleTap(this, &cinder_gestures_sampleApp::singleTap);
+	mTapAnalyzer.registerDoubleTap(this, &cinder_gestures_sampleApp::doubleTap);
 }
 
 bool cinder_gestures_sampleApp::pinchBegan( PinchEvent event )
@@ -76,7 +81,22 @@ bool cinder_gestures_sampleApp::pinchEnded( PinchEvent event )
 bool cinder_gestures_sampleApp::doubleTap( DoubleTapEvent event )
 {
 	// TODO: check location to make sure both taps were near the rectangle?
-	on = !on;
+	green = !green;
+	return false;
+}
+
+bool cinder_gestures_sampleApp::singleTap( SingleTapEvent event )
+{
+	// TODO: check location to make sure both taps were near the rectangle?
+	small = !small;
+	cout << "single tapped; small = " << small << endl;
+	return false;	
+}
+
+void cinder_gestures_sampleApp::update()
+{
+	// needed for SingleTapEvents:
+	mTapAnalyzer.update();
 }
 
 void cinder_gestures_sampleApp::draw()
@@ -87,11 +107,14 @@ void cinder_gestures_sampleApp::draw()
 	gl::pushModelView();
 	gl::multModelView( mView );
 	
-	double w = getWindowWidth();
-	double h = getWindowHeight();
+	float w = getWindowWidth();
+	float h = getWindowHeight();
 	
-	gl::color( Color(on ? 0 : 1, on ? 1 : 0, 0) );
-	gl::drawSolidRect( Rectf( -w/4.0f, -h/4.0f, w/4.0f, h/4.0f ) );
+	float s = math<float>::min(w, h) / 2.0f;
+	if (small) s /= 2.0f;
+	
+	gl::color( green ? Color(0, 1, 0) : Color(1, 0, 0) );
+	gl::drawSolidRect( Rectf( -s/2.0f, -s/2.0f, s/2.0f, s/2.0f ) );
 	
 	gl::popModelView();
 }
