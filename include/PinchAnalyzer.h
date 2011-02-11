@@ -1,5 +1,5 @@
 /*
- *  GestureHelper.h
+ *  PinchAnalyzer.h
  *  CinderGestures
  *
  *  Created by Tom Carden on 2/8/11.
@@ -11,99 +11,43 @@
 
 #include "cinder/Cinder.h"
 #include "cinder/app/TouchEvent.h"
+#include "GestureAnalyzer.h"
 #include "PinchEvent.h"
-#include "DoubleTapEvent.h"
 
 namespace cinder { namespace app {
 
-	class GestureHelper {
+	class PinchAnalyzer : public GestureAnalyzer {
 
 	private:
-		
-		// your Cinder App (usually passed in as 'this' in setup)
-		AppBasic *mApp;
 		
 		// keep track of previous touch point locations by id
 		std::map<uint32_t, Vec2f> mTouchesById;
 		
-		// keep track of the touches from the last touch ended event, for double tap
-		Vec2f prevTouchPos;
-		double prevTouchTime;
-		
 		// are we pinching yet?
 		bool mPinching;
-		
-		// are we twisting yet?
-		bool mTwisting;
 		
 		// handle basic touch events from mApp...
 		bool touchesBegan(TouchEvent event);
 		bool touchesMoved(TouchEvent event);
 		bool touchesEnded(TouchEvent event);
 		
-		// for cleanup in destructor/setup, keep callback ids
-		CallbackId mTouchesBeganCb;
-		CallbackId mTouchesMovedCb;
-		CallbackId mTouchesEndedCb;
-
 		// keep track of listeners for our own events...
 		CallbackMgr<bool(PinchEvent)> mCallbacksPinchBegan;
 		CallbackMgr<bool(PinchEvent)> mCallbacksPinchMoved;
 		CallbackMgr<bool(PinchEvent)> mCallbacksPinchEnded;
-		CallbackMgr<bool(DoubleTapEvent)> mCallbacksDoubleTap;
 				
 	public:		
 		
-		GestureHelper() {
+		PinchAnalyzer(): GestureAnalyzer() {
 			mPinching = false;
-			mTwisting = false;
-			mApp = NULL;
-		}
-		
-		~GestureHelper() {
-			if (mApp != NULL) {
-				mApp->unregisterTouchesBegan(mTouchesBeganCb);
-				mApp->unregisterTouchesMoved(mTouchesMovedCb);
-				mApp->unregisterTouchesEnded(mTouchesEndedCb);
-				mApp = NULL;
-			}			
 		}
 		
 		void setup(AppBasic *app) {
-			if (mApp != NULL) {
-				mApp->unregisterTouchesBegan(mTouchesBeganCb);
-				mApp->unregisterTouchesMoved(mTouchesMovedCb);
-				mApp->unregisterTouchesEnded(mTouchesEndedCb);
-				mApp = NULL;
-			}
-			mApp = app;
-			if (mApp != NULL) {
-				mApp->registerTouchesBegan(this, &GestureHelper::touchesBegan);
-				mApp->registerTouchesMoved(this, &GestureHelper::touchesMoved);
-				mApp->registerTouchesEnded(this, &GestureHelper::touchesEnded);
-			}
-			prevTouchTime = 0;
-			prevTouchPos = Vec2f(0,0);
+			GestureAnalyzer::setup(app);
 			mTouchesById.clear();
 			mPinching = false;
-			mTwisting = false;
 		}
 		
-		/* 
-		 * these registerXXX methods are convenience functions 
-		 * so that you can type:
-		 *
-		 *     gestureHelper.registerPinchBegan(this, &MyApp::pinchBegan);
-		 *
-		 * rather than:
-		 *
-		 *     gestureHelper.mCallbacksPinchBegan.registerCb(std::bind1st(std::mem_fun(&MyApp::pinchBegan), this));
-		 *     
-		 * where pinchBegan is a function in your app:
-		 *
-		 *     bool MyApp::pinchBegan(PinchEvent event) { ... }
-		 *
-		 */
 		template<typename T>
 		CallbackId registerPinchBegan( T *obj, bool (T::*callback)(PinchEvent) ){
 			return mCallbacksPinchBegan.registerCb(std::bind1st(std::mem_fun(callback), obj));
@@ -116,14 +60,10 @@ namespace cinder { namespace app {
 		CallbackId registerPinchEnded( T *obj, bool (T::*callback)(PinchEvent) ){
 			return mCallbacksPinchEnded.registerCb(std::bind1st(std::mem_fun(callback), obj));
 		}
-		template<typename T>
-		CallbackId registerDoubleTap( T *obj, bool (T::*callback)(DoubleTapEvent) ){
-			return mCallbacksDoubleTap.registerCb(std::bind1st(std::mem_fun(callback), obj));
-		}
 		
 	};
 
-	bool GestureHelper::touchesBegan(TouchEvent event)
+	bool PinchAnalyzer::touchesBegan(TouchEvent event)
 	{
 		std::vector<TouchEvent::Touch> touches = mApp->getActiveTouches();
 		for (int i = 0; i < touches.size(); i++) {
@@ -136,7 +76,7 @@ namespace cinder { namespace app {
 		return false;
 	}
 	
-	bool GestureHelper::touchesMoved(TouchEvent event)
+	bool PinchAnalyzer::touchesMoved(TouchEvent event)
 	{
 		std::vector<TouchEvent::Touch> touches = mApp->getActiveTouches();
 		if (mPinching) {
@@ -166,29 +106,12 @@ namespace cinder { namespace app {
 		return false;
 	}
 	
-	bool GestureHelper::touchesEnded(TouchEvent event)
+	bool PinchAnalyzer::touchesEnded(TouchEvent event)
 	{
 		std::vector<TouchEvent::Touch> touches = mApp->getActiveTouches();
 		if (mPinching && touches.size() < 2) {
 			mCallbacksPinchEnded.call(PinchEvent());
 			mPinching = false;
-		}
-		TouchEvent::Touch thisTouch = event.getTouches()[0];
-		double dt = thisTouch.getTime() - prevTouchTime;
-		bool doubleTapped = false;
-		if (dt > 0.05f && dt < 0.25f) {
-			if (prevTouchPos.distance(thisTouch.getPos()) < 25.0f) {
-				doubleTapped = true;
-				mCallbacksDoubleTap.call(DoubleTapEvent(thisTouch.getPos(), thisTouch.getTime()));
-			}
-		}
-		if (doubleTapped) {
-			prevTouchPos = Vec2f(0,0);
-			prevTouchTime = 0;
-		}
-		else {
-			prevTouchPos = event.getTouches()[0].getPos();
-			prevTouchTime = event.getTouches()[0].getTime();
 		}
 		return false;
 	}
