@@ -58,7 +58,7 @@ namespace cinder { namespace app {
 		
 	};
 	
-	bool GestureHelper::touchesEnded(TouchEvent event)
+	bool DoubleTapAnalyzer::touchesEnded(TouchEvent event)
 	{
 		std::vector<TouchEvent::Touch> touches = event.getTouches();
 		TouchEvent::Touch thisTouch = touches[0];
