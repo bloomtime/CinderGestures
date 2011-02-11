@@ -13,8 +13,10 @@
 #include "GestureAnalyzer.h"
 #include "PinchEvent.h"
 
+
 namespace cinder { namespace app {
 
+    
 class PinchAnalyzer : public GestureAnalyzer {
 protected:
     
@@ -110,11 +112,12 @@ bool PinchAnalyzer::touchesMoved(TouchEvent event)
 bool PinchAnalyzer::touchesEnded(TouchEvent event)
 {
     std::vector<TouchEvent::Touch> touches = mApp->getActiveTouches();
-    if(mIsPinching && touches.size() < 2) {
+    if(mIsPinching && touches.size() < 2){
         mCallbacksPinchEnded.call(mLastDispatchedEvent);
         mIsPinching = false;
     }
     return true;
 }
-	
+
+    
 } }
