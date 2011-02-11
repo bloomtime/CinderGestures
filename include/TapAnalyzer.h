@@ -43,6 +43,7 @@ namespace cinder { namespace app {
 		}
 		
 		void update() {
+			// TODO: it's only a single tap if the touch didn't move (much) between touchStart and touchEnd
 			std::cout << "TapAnalyzer::update: wasSingleTapped=" << wasSingleTapped << " dt=" << timer.getSeconds() << std::endl;
 			if (wasSingleTapped && timer.getSeconds() > 0.25f) {
 				mCallbacksSingleTap.call( SingleTapEvent( prevTouchPos, getElapsedSeconds()-timer.getSeconds() ) );
