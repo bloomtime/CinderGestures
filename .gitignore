@@ -1,8 +1,7 @@
 # Mac OS X cruft
-*.xcodeproj/
-!*.xcodeproj/project.pbxproj
 *.mode1v3
 *.mode2v3
+*.pbxuser
 *.user
 .DS_Store
 
