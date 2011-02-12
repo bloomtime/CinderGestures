@@ -19,18 +19,18 @@ class PinchEvent : public Event {
 private:
     
     Vec2f mTranslation;
-    Vec2f mOrigin;
+    Vec2f mRotationOrigin, mScaleOrigin;
     
     float mRotation, mScale;
         
 public:
 
     PinchEvent() : mRotation(0), mScale(0){}
-    PinchEvent(const Vec2f &origin, const Vec2f &translation, float rotation, float scale)
-    : mOrigin(origin), mTranslation(translation), mRotation(rotation), mScale(scale)
+    PinchEvent(const Vec2f &translation, const Vec2f &rotationOrigin, float rotation, const Vec2f &scaleOrigin, float scale)
+    : mTranslation(translation), mRotationOrigin(rotationOrigin), mRotation(rotation), mScaleOrigin(scaleOrigin), mScale(scale)
     {}
     
-    const Vec2f& getOrigin()      const { return mOrigin; }
+//    const Vec2f& getOrigin()      const { return mOrigin; }
     const Vec2f& getTranslation() const { return mTranslation; }
     float        getRotation()    const { return mRotation; }
     float        getScale()       const { return mScale; }
@@ -42,17 +42,16 @@ public:
     
     Matrix44f getTransform(const Matrix44f &obj_transform)
     {
-        Vec3f origin(mOrigin);
-        Vec3f translation(mTranslation);
+        Vec3f rotationOrigin = obj_transform.transformPointAffine(Vec3f(mRotationOrigin));
         Matrix44f mtx;
-        mtx.translate(translation);
-        mtx *= obj_transform;
-        mtx.translate(-origin);
+        mtx.translate(Vec3f(mTranslation));
+        mtx.translate(Vec3f(mScaleOrigin));
         mtx.scale(Vec3f(mScale, mScale, mScale));
-        mtx.translate(origin);
-//        mtx.translate(-origin);
-//        mtx.rotate(Vec3f::zAxis(), mRotation);
-//        mtx.translate(origin);
+        mtx.translate(-Vec3f(mScaleOrigin));
+        mtx *= obj_transform;
+        mtx.translate(Vec3f(mRotationOrigin));
+        mtx.rotate(Vec3f::zAxis(), mRotation);
+        mtx.translate(-Vec3f(mRotationOrigin));
         return mtx;
     }
     

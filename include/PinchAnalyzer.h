@@ -78,7 +78,7 @@ bool PinchAnalyzer::touchesBegan(TouchEvent event)
         mStartDist   = tp1.distance(tp2);
         mStartRot    = math<float>::atan2(tp2.y - tp1.y, tp2.x - tp1.x);
         mIsPinching  = true;
-        mLastDispatchedEvent = PinchEvent(mStartOrigin, Vec2f(), 0.0f, 1.0f);
+        mLastDispatchedEvent = PinchEvent(Vec2f(), mStartOrigin, 0.0f, mStartOrigin, 1.0f);
         mCallbacksPinchBegan.call(mLastDispatchedEvent);
         
         return true;
@@ -102,7 +102,7 @@ bool PinchAnalyzer::touchesMoved(TouchEvent event)
             float scale       = nowDist / mStartDist;
             float rotation    = nowRot - mStartRot;
             
-            mLastDispatchedEvent = PinchEvent(nowOrigin, translation, rotation, scale);
+            mLastDispatchedEvent = PinchEvent(translation, nowOrigin, rotation, mStartOrigin, scale);
             mCallbacksPinchMoved.call(mLastDispatchedEvent);
             
             return true;
@@ -117,7 +117,6 @@ bool PinchAnalyzer::touchesEnded(TouchEvent event)
     if(mIsPinching && touches.size() < 2){
         mCallbacksPinchEnded.call(mLastDispatchedEvent);
         mIsPinching = false;
-        
         return true;
     }
     return false;
