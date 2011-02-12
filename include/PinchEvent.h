@@ -33,12 +33,19 @@ public:
     float        getRotation()    const { return mRotation; }
     float        getScale()       const { return mScale; }
     
-    Matrix44f getTransform()
+    Matrix44f getTransform(const Matrix44f &obj_transform)
     {
+        Vec3f origin(mOrigin);
+        Vec3f translation(mTranslation);
         Matrix44f mtx;
-        mtx.translate(Vec3f(mTranslation, 0.0f));
-        mtx.rotate(Vec3f::zAxis(), mRotation);
+        mtx.translate(translation);
+        mtx *= obj_transform;
+        mtx.translate(-origin);
         mtx.scale(Vec3f(mScale, mScale, mScale));
+        mtx.translate(origin);
+//        mtx.translate(-origin);
+//        mtx.rotate(Vec3f::zAxis(), mRotation);
+//        mtx.translate(origin);
         return mtx;
     }
     

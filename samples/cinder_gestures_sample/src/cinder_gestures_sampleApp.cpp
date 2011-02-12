@@ -15,7 +15,7 @@ public:
 //	TapAnalyzer   mTapAnalyzer;
 	
 	Matrix44f mRectTransform;  // transform of our rectangle
-    Matrix44f mLastTransform;
+    Matrix44f mRectLastTransform;
 	bool green; // toggled by double tap
 	bool small; // toggled by single tap
 
@@ -62,21 +62,20 @@ void cinder_gestures_sampleApp::setup()
 bool cinder_gestures_sampleApp::pinchBegan( PinchEvent event )
 {
 	cout << "pinch began" << endl;
-    mLastTransform = mRectTransform;
+    mRectLastTransform = mRectTransform;
 	return false;
 }
 
 bool cinder_gestures_sampleApp::pinchMoved( PinchEvent event )
 {
 	cout << "pinch moved" << endl;
-	mRectTransform = mLastTransform * event.getTransform();
+	mRectTransform = event.getTransform(mRectLastTransform);
 	return true; // consumed (does nothing yet)
 }
 
 bool cinder_gestures_sampleApp::pinchEnded( PinchEvent event )
 {
 	cout << "pinch ended" << endl;
-    mRectTransform = mLastTransform * event.getTransform();
 	return false;
 }
 
