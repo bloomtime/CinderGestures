@@ -9,15 +9,25 @@
 #pragma once
 
 #include "cinder/Cinder.h"
+#if defined (CINDER_COCOA_TOUCH)
+#include "cinder/app/AppCocoaTouch.h"
+#else
 #include "cinder/app/AppBasic.h"
+#endif
 
 namespace cinder { namespace app {
 
 class GestureAnalyzer {
 protected:
     
+#if defined (CINDER_COCOA_TOUCH)
+    typedef AppCocoaTouch AppType;
+#else
+    typedef AppBasic AppType;
+#endif
+    
     // your Cinder App (usually passed in as 'this' in setup)
-    AppBasic *mApp;
+    AppType *mApp;
             
     // subclasses must handle basic touch events from mApp...
     virtual bool touchesBegan(TouchEvent event) = 0;
@@ -52,7 +62,7 @@ public:
         unregisterTouchCallbacks();
     }
     
-    virtual void init(AppBasic *app)
+    virtual void init(AppType *app)
     {
         unregisterTouchCallbacks();
         mApp = app;
