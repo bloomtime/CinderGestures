@@ -10,6 +10,8 @@
 
 #include "cinder/app/Event.h"
 #include "cinder/Vector.h"
+#include "cinder/Matrix.h"
+#include "cinder/Quaternion.h"
 
 namespace cinder { namespace app {
 
@@ -32,6 +34,11 @@ public:
     const Vec2f& getTranslation() const { return mTranslation; }
     float        getRotation()    const { return mRotation; }
     float        getScale()       const { return mScale; }
+    
+    Quatf getQuat()
+    {
+        return Quatf(Vec3f::zAxis(), mRotation);
+    }
     
     Matrix44f getTransform(const Matrix44f &obj_transform)
     {

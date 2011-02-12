@@ -9,12 +9,13 @@
 #pragma once
 
 #include "cinder/app/TouchEvent.h"
-#include "cinder/Matrix.h"
 #include "GestureAnalyzer.h"
 #include "PinchEvent.h"
 
+
 namespace cinder { namespace app {
 
+    
 class PinchAnalyzer : public GestureAnalyzer {
 protected:
     
@@ -43,7 +44,7 @@ public:
     
     PinchAnalyzer() : GestureAnalyzer(), mIsPinching(false) {}
     
-    void init(AppBasic *app){
+    void init(AppType *app){
         GestureAnalyzer::init(app);
         mStartPositions.clear();
         mIsPinching = false;
@@ -79,8 +80,10 @@ bool PinchAnalyzer::touchesBegan(TouchEvent event)
         mIsPinching  = true;
         mLastDispatchedEvent = PinchEvent(mStartOrigin, Vec2f(), 0.0f, 1.0f);
         mCallbacksPinchBegan.call(mLastDispatchedEvent);
+        
+        return true;
     }
-    return true;
+    return false;
 }
 
 bool PinchAnalyzer::touchesMoved(TouchEvent event)
@@ -100,21 +103,25 @@ bool PinchAnalyzer::touchesMoved(TouchEvent event)
             float rotation    = nowRot - mStartRot;
             
             mLastDispatchedEvent = PinchEvent(nowOrigin, translation, rotation, scale);
-            
             mCallbacksPinchMoved.call(mLastDispatchedEvent);
+            
+            return true;
         }
     }
-    return true;
+    return false;
 }
 
 bool PinchAnalyzer::touchesEnded(TouchEvent event)
 {
     std::vector<TouchEvent::Touch> touches = mApp->getActiveTouches();
-    if(mIsPinching && touches.size() < 2) {
+    if(mIsPinching && touches.size() < 2){
         mCallbacksPinchEnded.call(mLastDispatchedEvent);
         mIsPinching = false;
+        
+        return true;
     }
-    return true;
+    return false;
 }
-	
+
+    
 } }
