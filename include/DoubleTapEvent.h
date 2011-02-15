@@ -21,6 +21,12 @@ namespace cinder { namespace app {
 	public:
 		DoubleTapEvent(const Vec2f &pos, const double &t): mPos(pos), mTime(t) {
 		}
+		const double& getTime() {
+			return mTime;
+		}
+		const Vec2f& getPos() {
+			return mPos;
+		}
 	};
 
 } }
