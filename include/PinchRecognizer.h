@@ -1,22 +1,14 @@
-/*
- *  PinchAnalyzer.h
- *  CinderGestures
- *
- *  Created by Tom Carden on 2/8/11.
- *  Copyright 2011 Bloom Studio Inc. All rights reserved.
- */
-
 #pragma once
 
 #include "cinder/app/TouchEvent.h"
-#include "GestureAnalyzer.h"
+#include "PhasedGestureRecognizer.h"
 #include "PinchEvent.h"
 
 
 namespace cinder { namespace app {
 
-    
-class PinchAnalyzer : public GestureAnalyzer {
+
+class PinchRecognizer : public PhasedGestureRecognizer<PinchEvent> {
 protected:
     
     // keep track of previous touch point locations by id
@@ -34,39 +26,21 @@ protected:
     bool touchesBegan(TouchEvent event);
     bool touchesMoved(TouchEvent event);
     bool touchesEnded(TouchEvent event);
-    
-    // keep track of listeners for our own events...
-    CallbackMgr<bool(PinchEvent)> mCallbacksPinchBegan;
-    CallbackMgr<bool(PinchEvent)> mCallbacksPinchMoved;
-    CallbackMgr<bool(PinchEvent)> mCallbacksPinchEnded;
 
 public:		
     
-    PinchAnalyzer() : GestureAnalyzer(), mIsPinching(false) {}
+    PinchRecognizer() : PhasedGestureRecognizer<PinchEvent>(), mIsPinching(false) {}
     
     void init(AppType *app){
-        GestureAnalyzer::init(app);
+        PhasedGestureRecognizer<PinchEvent>::init(app);
         mStartPositions.clear();
         mIsPinching = false;
-    }
-    
-    template<typename T>
-    CallbackId registerPinchBegan(T *obj, bool (T::*callback)(PinchEvent)){
-        return mCallbacksPinchBegan.registerCb(std::bind1st(std::mem_fun(callback), obj));
-    }
-    template<typename T>
-    CallbackId registerPinchMoved(T *obj, bool (T::*callback)(PinchEvent)){
-        return mCallbacksPinchMoved.registerCb(std::bind1st(std::mem_fun(callback), obj));
-    }
-    template<typename T>
-    CallbackId registerPinchEnded(T *obj, bool (T::*callback)(PinchEvent)){
-        return mCallbacksPinchEnded.registerCb(std::bind1st(std::mem_fun(callback), obj));
     }
 
 };
 
     
-bool PinchAnalyzer::touchesBegan(TouchEvent event)
+bool PinchRecognizer::touchesBegan(TouchEvent event)
 {
     std::vector<TouchEvent::Touch> touches = mApp->getActiveTouches();
     if(!mIsPinching && touches.size() == 2){
@@ -79,14 +53,14 @@ bool PinchAnalyzer::touchesBegan(TouchEvent event)
         mStartRot    = math<float>::atan2(tp2.y - tp1.y, tp2.x - tp1.x);
         mIsPinching  = true;
         mLastDispatchedEvent = PinchEvent(Vec2f(), mStartOrigin, 0.0f, mStartOrigin, 1.0f);
-        mCallbacksPinchBegan.call(mLastDispatchedEvent);
+        mCallbacksBegan.call(mLastDispatchedEvent);
         
         return true;
     }
     return false;
 }
 
-bool PinchAnalyzer::touchesMoved(TouchEvent event)
+bool PinchRecognizer::touchesMoved(TouchEvent event)
 {
     std::vector<TouchEvent::Touch> touches = mApp->getActiveTouches();
     if(mIsPinching){
@@ -103,7 +77,7 @@ bool PinchAnalyzer::touchesMoved(TouchEvent event)
             float rotation    = nowRot - mStartRot;
             
             mLastDispatchedEvent = PinchEvent(translation, nowOrigin, rotation, mStartOrigin, scale);
-            mCallbacksPinchMoved.call(mLastDispatchedEvent);
+            mCallbacksMoved.call(mLastDispatchedEvent);
             
             return true;
         }
@@ -111,11 +85,11 @@ bool PinchAnalyzer::touchesMoved(TouchEvent event)
     return false;
 }
 
-bool PinchAnalyzer::touchesEnded(TouchEvent event)
+bool PinchRecognizer::touchesEnded(TouchEvent event)
 {
     std::vector<TouchEvent::Touch> touches = mApp->getActiveTouches();
     if(mIsPinching && touches.size() < 2){
-        mCallbacksPinchEnded.call(mLastDispatchedEvent);
+        mCallbacksEnded.call(mLastDispatchedEvent);
         mIsPinching = false;
         return true;
     }
@@ -123,4 +97,4 @@ bool PinchAnalyzer::touchesEnded(TouchEvent event)
 }
 
     
-} }
+} } // namespace cinder::app

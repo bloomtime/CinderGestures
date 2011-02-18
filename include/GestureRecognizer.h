@@ -1,11 +1,3 @@
-/*
- *  GestureAnalyzer.h
- *  CinderGestures
- *
- *  Created by Tom Carden on 2/8/11.
- *  Copyright 2011 Bloom Studio Inc. All rights reserved.
- */
-
 #pragma once
 
 #include "cinder/Cinder.h"
@@ -17,7 +9,7 @@
 
 namespace cinder { namespace app {
 
-class GestureAnalyzer {
+class GestureRecognizer {
 protected:
     
 #if defined (CINDER_COCOA_TOUCH)
@@ -41,9 +33,9 @@ protected:
     
     void registerTouchCallbacks(){
         if(mApp){
-            mTouchesBeganCb = mApp->registerTouchesBegan(this, &GestureAnalyzer::touchesBegan);
-            mTouchesMovedCb = mApp->registerTouchesMoved(this, &GestureAnalyzer::touchesMoved);
-            mTouchesEndedCb = mApp->registerTouchesEnded(this, &GestureAnalyzer::touchesEnded);
+            mTouchesBeganCb = mApp->registerTouchesBegan(this, &GestureRecognizer::touchesBegan);
+            mTouchesMovedCb = mApp->registerTouchesMoved(this, &GestureRecognizer::touchesMoved);
+            mTouchesEndedCb = mApp->registerTouchesEnded(this, &GestureRecognizer::touchesEnded);
         }
     }
     void unregisterTouchCallbacks(){
@@ -56,9 +48,9 @@ protected:
             
 public:		
     
-    GestureAnalyzer() : mApp(0) {}
+    GestureRecognizer() : mApp(0) {}
     
-    ~GestureAnalyzer(){
+    ~GestureRecognizer(){
         unregisterTouchCallbacks();
     }
     
