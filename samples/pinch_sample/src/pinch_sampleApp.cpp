@@ -22,7 +22,9 @@ public:
     PinchRecognizer mPinchRecognizer;
     
     CameraPersp mCamera;
-    Matrix44f   mMatrix, mLastMatrix;
+    Matrix44f   mMatrix;
+    
+    vector<TouchEvent::Touch> mPinchTouches;
 };
 
 
@@ -40,6 +42,8 @@ void pinch_sampleApp::setup()
     
     mCamera.lookAt(Vec3f(0,0,-5), Vec3f::zero(), Vec3f::yAxis());
     mCamera.setAspectRatio(getWindowAspectRatio());
+    
+    gl::enableDepthRead();
 }
 
 void pinch_sampleApp::update()
@@ -52,42 +56,35 @@ void pinch_sampleApp::draw()
     
     gl::enableAlphaBlending();
     
-//    gl::setMatrices(mCamera);
-//    gl::multModelView(mMatrix);
-//    
-//    gl::rotate(Vec3f(30,40,30));
-//    gl::color(Color::white());
-//    gl::drawStrokedCube(Vec3f::zero(), Vec3f::one());
     gl::setMatricesWindow(getWindowSize(), true);
+    
+    gl::color(Color(1,0,0));
+    for(vector<TouchEvent::Touch>::iterator it = mPinchTouches.begin(); it != mPinchTouches.end(); ++it)
+        gl::drawSolidCircle(it->getPos(), 30);
+    
     gl::multModelView(mMatrix);
     
-    gl::color(ColorA(1,1,1,0.25f));
+    gl::color(Color(0.25f, 0.25f, 0.25f));
     gl::drawSolidRect(getWindowBounds());
-    
-    gl::translate(getWindowCenter());
-    gl::rotate(Vec3f(30,40,30));
-    gl::scale(Vec3f(100,100,100));
-    gl::color(Color::white());
-    gl::drawStrokedCube(Vec3f::zero(), Vec3f::one());
-
 }
 
 
 bool pinch_sampleApp::onPinchBegan(PinchEvent event)
 {
-    mLastMatrix = mMatrix;
+    mPinchTouches = event.getTouches();
     return false;
 }
 
 bool pinch_sampleApp::onPinchMoved(PinchEvent event)
 {
-//    mMatrix = event.getTransform() * mLastMatrix;
+    mPinchTouches = event.getTouches();
     mMatrix = event.getTransformDelta() * mMatrix;
     return false;
 }
 
 bool pinch_sampleApp::onPinchEnded(PinchEvent event)
 {
+    mPinchTouches.clear();
     return false;
 }
 

@@ -5,6 +5,8 @@
 #include "cinder/Matrix.h"
 #include "cinder/Quaternion.h"
 
+using std::vector;
+
 namespace cinder { namespace app {
 
 
@@ -15,12 +17,20 @@ private:
     Vec2f mTouch1Prev,  mTouch2Prev;
     Vec2f mTouch1,      mTouch2;
     
+    vector<TouchEvent::Touch> mTouches;
+    
 public:
 
-    PinchEvent(){}
-    PinchEvent(const Vec2f &t1s, const Vec2f &t2s, const Vec2f &t1p, const Vec2f &t2p, const Vec2f &t1, const Vec2f &t2)
-    : mTouch1Start(t1s), mTouch2Start(t2s), mTouch1Prev(t1p), mTouch2Prev(t2p), mTouch1(t1), mTouch2(t2)
-    {}
+    PinchEvent()
+    {
+    }
+    
+    PinchEvent(const vector<TouchEvent::Touch> touches, const Vec2f &t1s, const Vec2f &t2s, const Vec2f &t1p, const Vec2f &t2p)
+    : mTouch1Start(t1s), mTouch2Start(t2s),
+      mTouch1Prev(t1p),  mTouch2Prev(t2p),
+      mTouches(touches), mTouch1(touches[0].getPos()), mTouch2(touches[1].getPos())
+    {
+    }
 
     Vec2f getTranslation() const {
         return mTouch1 - mTouch1Start;
@@ -30,10 +40,12 @@ public:
     }
 
     float getRotation() const {
-        return math<float>::atan2(mTouch2.y - mTouch1.y, mTouch2.x - mTouch1.x) - math<float>::atan2(mTouch2Start.y - mTouch1Start.y, mTouch2Start.x - mTouch1Start.x);
+        return math<float>::atan2(mTouch2.y - mTouch1.y, mTouch2.x - mTouch1.x)
+             - math<float>::atan2(mTouch2Start.y - mTouch1Start.y, mTouch2Start.x - mTouch1Start.x);
     }
     float getRotationDelta() const {
-        return math<float>::atan2(mTouch2.y - mTouch1.y, mTouch2.x - mTouch1.x) - math<float>::atan2(mTouch2Prev.y - mTouch1Prev.y, mTouch2Prev.x - mTouch1Prev.x);
+        return math<float>::atan2(mTouch2.y - mTouch1.y, mTouch2.x - mTouch1.x)
+             - math<float>::atan2(mTouch2Prev.y - mTouch1Prev.y, mTouch2Prev.x - mTouch1Prev.x);
     }
 
     float getScale() const {
@@ -41,6 +53,10 @@ public:
     }
     float getScaleDelta() const {
         return mTouch1.distance(mTouch2) / mTouch1Prev.distance(mTouch2Prev);
+    }
+    
+    const vector<TouchEvent::Touch>& getTouches() const {
+        return mTouches;
     }
     
     Matrix44f getTransform()
