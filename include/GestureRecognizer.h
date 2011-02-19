@@ -9,6 +9,7 @@
 
 namespace cinder { namespace app {
 
+    
 class GestureRecognizer {
 protected:
     
@@ -60,7 +61,8 @@ public:
         mApp = app;
         registerTouchCallbacks();
     }
-            
+
 };
 	
-} }
+    
+} } // namespace cinder::app

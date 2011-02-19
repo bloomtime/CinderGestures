@@ -4,6 +4,7 @@
 
 namespace cinder { namespace app {
 
+    
 template<typename EventType>
 class PhasedGestureRecognizer : public GestureRecognizer {
 protected:
@@ -28,5 +29,6 @@ public:
     }
     
 };
+    
     
 } } // namespace cinder::app

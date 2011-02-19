@@ -1,8 +1,7 @@
 #include "cinder/app/AppCocoaTouch.h"
 #include "cinder/app/Renderer.h"
-#include "cinder/Surface.h"
-#include "cinder/gl/Texture.h"
 #include "cinder/Camera.h"
+#include "cinder/Matrix.h"
 
 #include "PinchRecognizer.h"
 
@@ -10,64 +9,87 @@ using namespace ci;
 using namespace ci::app;
 
 class pinch_sampleApp : public AppCocoaTouch {
-  public:
-	virtual void	setup();
-	virtual void	resize( ResizeEvent event );
-	virtual void	update();
-	virtual void	draw();
-	virtual void	mouseDown( MouseEvent event );
-		
-	Matrix44f	mCubeRotation;
-	gl::Texture mTex;
-	CameraPersp	mCam;
+public:
+    void prepareSettings(Settings *settings);
+	void setup();
+	void update();
+	void draw();
+    
+    bool onPinchBegan(PinchEvent event);
+    bool onPinchMoved(PinchEvent event);
+    bool onPinchEnded(PinchEvent event);
+    
+    PinchRecognizer mPinchRecognizer;
+    
+    CameraPersp mCamera;
+    Matrix44f   mMatrix, mLastMatrix;
 };
+
+
+void pinch_sampleApp::prepareSettings(Settings *settings)
+{
+    settings->enableMultiTouch();
+}
 
 void pinch_sampleApp::setup()
 {
-	mCubeRotation.setToIdentity();
-
-	// Create a blue-green gradient as an OpenGL texture
-	Surface8u surface( 256, 256, false );
-	Surface8u::Iter iter = surface.getIter();
-	while( iter.line() ) {
-		while( iter.pixel() ) {
-			iter.r() = 0;
-			iter.g() = iter.x();
-			iter.b() = iter.y();
-		}
-	}
-	
-	mTex = gl::Texture( surface );
-}
-
-void pinch_sampleApp::resize( ResizeEvent event )
-{
-	mCam.lookAt( Vec3f( 3, 2, -3 ), Vec3f::zero() );
-	mCam.setPerspective( 60, event.getAspectRatio(), 1, 1000 );
-}
-
-void pinch_sampleApp::mouseDown( MouseEvent event )
-{
-	console() << "Mouse down @ " << event.getPos() << std::endl;
+	mPinchRecognizer.init(this);
+    mPinchRecognizer.registerBegan(this, &pinch_sampleApp::onPinchBegan);
+    mPinchRecognizer.registerMoved(this, &pinch_sampleApp::onPinchMoved);
+    mPinchRecognizer.registerEnded(this, &pinch_sampleApp::onPinchEnded);
+    
+    mCamera.lookAt(Vec3f(0,0,-5), Vec3f::zero(), Vec3f::yAxis());
+    mCamera.setAspectRatio(getWindowAspectRatio());
 }
 
 void pinch_sampleApp::update()
 {
-	mCubeRotation.rotate( Vec3f( 1, 1, 1 ), 0.03f );
 }
 
 void pinch_sampleApp::draw()
 {
-	gl::clear( Color( 0.2f, 0.2f, 0.3f ) );
-	gl::enable( GL_TEXTURE_2D );
-	gl::enableDepthRead();
-	
-	mTex.bind();
-	gl::setMatrices( mCam );
-	glPushMatrix();
-		gl::multModelView( mCubeRotation );
-		gl::drawCube( Vec3f::zero(), Vec3f( 2.0f, 2.0f, 2.0f ) );
-	glPopMatrix();
+    gl::clear(Color::black());
+    
+    gl::enableAlphaBlending();
+    
+//    gl::setMatrices(mCamera);
+//    gl::multModelView(mMatrix);
+//    
+//    gl::rotate(Vec3f(30,40,30));
+//    gl::color(Color::white());
+//    gl::drawStrokedCube(Vec3f::zero(), Vec3f::one());
+    gl::setMatricesWindow(getWindowSize(), true);
+    gl::multModelView(mMatrix);
+    
+    gl::color(ColorA(1,1,1,0.25f));
+    gl::drawSolidRect(getWindowBounds());
+    
+    gl::translate(getWindowCenter());
+    gl::rotate(Vec3f(30,40,30));
+    gl::scale(Vec3f(100,100,100));
+    gl::color(Color::white());
+    gl::drawStrokedCube(Vec3f::zero(), Vec3f::one());
+
 }
+
+
+bool pinch_sampleApp::onPinchBegan(PinchEvent event)
+{
+    mLastMatrix = mMatrix;
+    return false;
+}
+
+bool pinch_sampleApp::onPinchMoved(PinchEvent event)
+{
+//    mMatrix = event.getTransform() * mLastMatrix;
+    mMatrix = event.getTransformDelta() * mMatrix;
+    return false;
+}
+
+bool pinch_sampleApp::onPinchEnded(PinchEvent event)
+{
+    return false;
+}
+
 
 CINDER_APP_COCOA_TOUCH( pinch_sampleApp, RendererGl )
