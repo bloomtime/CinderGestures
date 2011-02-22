@@ -9,13 +9,13 @@
 #pragma once
 
 #include "cinder/Timer.h"
-#include "GestureAnalyzer.h"
+#include "GestureRecognizer.h"
 #include "DoubleTapEvent.h"
 #include "SingleTapEvent.h"
 
 namespace cinder { namespace app {
 
-	class TapAnalyzer : public GestureAnalyzer {
+	class TapRecognizer : public GestureRecognizer {
 
 	protected:
 				
@@ -28,22 +28,24 @@ namespace cinder { namespace app {
 		
 		// override touch end handling from GestureAnalyzer base...
 		bool touchesEnded(TouchEvent event);
+		bool touchesBegan(TouchEvent event) { return false; } // ignore these for now
+		bool touchesMoved(TouchEvent event) { return false; } // TODO: should they be optional not required?
 		
 		// keep track of listeners for our own events...
 		CallbackMgr<bool(DoubleTapEvent)> mCallbacksDoubleTap;
 		CallbackMgr<bool(SingleTapEvent)> mCallbacksSingleTap;
-				
+
 	public:		
 		
 		void init(AppBasic *app) {
-			GestureAnalyzer::init(app);
+			GestureRecognizer::init(app);
 			wasSingleTapped = false;
 			prevTouchPos = Vec2f(0,0);
 		}
 		
 		void update() {
 			// TODO: it's only a single tap if the touch didn't move (much) between touchStart and touchEnd
-			std::cout << "TapAnalyzer::update: wasSingleTapped=" << wasSingleTapped << " dt=" << timer.getSeconds() << std::endl;
+			std::cout << "TapRecognizer::update: wasSingleTapped=" << wasSingleTapped << " dt=" << timer.getSeconds() << std::endl;
 			if (wasSingleTapped && timer.getSeconds() > 0.25f) {
 				mCallbacksSingleTap.call( SingleTapEvent( prevTouchPos, getElapsedSeconds()-timer.getSeconds() ) );
 				prevTouchPos = Vec2f(0,0);
@@ -55,11 +57,11 @@ namespace cinder { namespace app {
 		 * these registerXXX methods are convenience functions 
 		 * so that you can type:
 		 *
-		 *     tapAnalyzer.registerDoubleTap(this, &MyApp::doubleTap);
+		 *     mTapRecognizer.registerDoubleTap(this, &MyApp::doubleTap);
 		 *
 		 * rather than:
 		 *
-		 *     tapAnalyzer.mCallbacksDoubleTap.registerCb(std::bind1st(std::mem_fun(&MyApp::doubleTap), this));
+		 *     mTapRecognizer.mCallbacksDoubleTap.registerCb(std::bind1st(std::mem_fun(&MyApp::doubleTap), this));
 		 *     
 		 * where doubleTap is a function in your app:
 		 *
@@ -78,7 +80,7 @@ namespace cinder { namespace app {
 		
 	};
 	
-	bool TapAnalyzer::touchesEnded(TouchEvent event)
+	bool TapRecognizer::touchesEnded(TouchEvent event)
 	{
 		std::vector<TouchEvent::Touch> touches = event.getTouches();
 		bool doubleTapped = false;

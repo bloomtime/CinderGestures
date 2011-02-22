@@ -42,10 +42,11 @@
 		8D1107320486CEB800E47090 /* cinder_gestures_sample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = cinder_gestures_sample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E23D4C601304AFCD00CCB186 /* DoubleTapEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoubleTapEvent.h; sourceTree = "<group>"; };
 		E23D4C621304AFCD00CCB186 /* PinchEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PinchEvent.h; sourceTree = "<group>"; };
-		E23D4C821304BCB300CCB186 /* GestureAnalyzer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GestureAnalyzer.h; sourceTree = "<group>"; };
-		E23D4C831304BCCE00CCB186 /* PinchAnalyzer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PinchAnalyzer.h; sourceTree = "<group>"; };
 		E23D4C961304CA0100CCB186 /* SingleTapEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingleTapEvent.h; sourceTree = "<group>"; };
-		E23D4C971304CA0100CCB186 /* TapAnalyzer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TapAnalyzer.h; sourceTree = "<group>"; };
+		E23D4C971304CA0100CCB186 /* TapRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TapRecognizer.h; sourceTree = "<group>"; };
+		E271194E1314771C00327D14 /* GestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GestureRecognizer.h; sourceTree = "<group>"; };
+		E271194F1314771C00327D14 /* PhasedGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhasedGestureRecognizer.h; sourceTree = "<group>"; };
+		E27119501314771C00327D14 /* PinchRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PinchRecognizer.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -170,9 +171,10 @@
 		E23D4C5F1304AFCD00CCB186 /* include */ = {
 			isa = PBXGroup;
 			children = (
-				E23D4C821304BCB300CCB186 /* GestureAnalyzer.h */,
-				E23D4C831304BCCE00CCB186 /* PinchAnalyzer.h */,
-				E23D4C971304CA0100CCB186 /* TapAnalyzer.h */,
+				E271194E1314771C00327D14 /* GestureRecognizer.h */,
+				E271194F1314771C00327D14 /* PhasedGestureRecognizer.h */,
+				E27119501314771C00327D14 /* PinchRecognizer.h */,
+				E23D4C971304CA0100CCB186 /* TapRecognizer.h */,
 				E23D4C961304CA0100CCB186 /* SingleTapEvent.h */,
 				E23D4C601304AFCD00CCB186 /* DoubleTapEvent.h */,
 				E23D4C621304AFCD00CCB186 /* PinchEvent.h */,
@@ -296,7 +298,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = i386;
-				CINDER_PATH = /Users/ryan/Documents/cinder;
+				CINDER_PATH = /Users/tom/Documents/Code/Cinder/Cinder;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "\"$(CINDER_PATH)/boost\"";
