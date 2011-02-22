@@ -1,7 +1,7 @@
 #include "cinder/app/AppBasic.h"
 #include "cinder/gl/gl.h"
 #include "cinder/Camera.h"
-#include "TapAnalyzer.h"
+//#include "TapAnalyzer.h"
 #include "PinchAnalyzer.h"
 
 using namespace ci;
@@ -9,12 +9,13 @@ using namespace ci::app;
 using namespace std;
 
 class cinder_gestures_sampleApp : public AppBasic {
-  public:
+public:
 	
 	PinchAnalyzer mPinchAnalyzer;
-	TapAnalyzer mTapAnalyzer;
+//	TapAnalyzer   mTapAnalyzer;
 	
-	Matrix44d mView; // manipulated by pinching
+	Matrix44f mRectTransform;  // transform of our rectangle
+    Matrix44f mRectLastTransform;
 	bool green; // toggled by double tap
 	bool small; // toggled by single tap
 
@@ -28,8 +29,9 @@ class cinder_gestures_sampleApp : public AppBasic {
 	bool pinchMoved( PinchEvent event );	
 	bool pinchEnded( PinchEvent event );	
 	
-	bool singleTap( SingleTapEvent event );
-	bool doubleTap( DoubleTapEvent event );
+//	bool singleTap( SingleTapEvent event );
+//	bool doubleTap( DoubleTapEvent event );
+
 };
 
 void cinder_gestures_sampleApp::prepareSettings(Settings *settings)
@@ -40,35 +42,34 @@ void cinder_gestures_sampleApp::prepareSettings(Settings *settings)
 	small = false;
 }
 
+
 void cinder_gestures_sampleApp::setup()
 {	
 	// center everything!
-	mView.translate(Vec3f(getWindowWidth()/2,getWindowHeight()/2,0));
+	mRectTransform.translate(Vec3f(getWindowWidth() / 2, getWindowHeight() / 2, 0));
 	
-	mPinchAnalyzer.setup(this);
+	mPinchAnalyzer.init(this);
 	mPinchAnalyzer.registerPinchBegan(this, &cinder_gestures_sampleApp::pinchBegan);
 	mPinchAnalyzer.registerPinchMoved(this, &cinder_gestures_sampleApp::pinchMoved);
 	mPinchAnalyzer.registerPinchEnded(this, &cinder_gestures_sampleApp::pinchEnded);
 	
-	mTapAnalyzer.setup(this);
-	mTapAnalyzer.registerSingleTap(this, &cinder_gestures_sampleApp::singleTap);
-	mTapAnalyzer.registerDoubleTap(this, &cinder_gestures_sampleApp::doubleTap);
+//	mTapAnalyzer.init(this);
+//	mTapAnalyzer.registerSingleTap(this, &cinder_gestures_sampleApp::singleTap);
+//	mTapAnalyzer.registerDoubleTap(this, &cinder_gestures_sampleApp::doubleTap);
 }
+
 
 bool cinder_gestures_sampleApp::pinchBegan( PinchEvent event )
 {
 	cout << "pinch began" << endl;
+    mRectLastTransform = mRectTransform;
 	return false;
 }
 
 bool cinder_gestures_sampleApp::pinchMoved( PinchEvent event )
 {
 	cout << "pinch moved" << endl;
-	
-	mView.translate(Vec3f(getWindowWidth()/2,getWindowHeight()/2,0));
-	mView *= event.getTransform();
-	mView.translate(-Vec3f(getWindowWidth()/2,getWindowHeight()/2,0));
-		
+	mRectTransform = event.getTransform(mRectLastTransform);
 	return true; // consumed (does nothing yet)
 }
 
@@ -78,25 +79,27 @@ bool cinder_gestures_sampleApp::pinchEnded( PinchEvent event )
 	return false;
 }
 
-bool cinder_gestures_sampleApp::doubleTap( DoubleTapEvent event )
-{
-	// TODO: check location to make sure both taps were near the rectangle?
-	green = !green;
-	return false;
-}
 
-bool cinder_gestures_sampleApp::singleTap( SingleTapEvent event )
-{
-	// TODO: check location to make sure both taps were near the rectangle?
-	small = !small;
-	cout << "single tapped; small = " << small << endl;
-	return false;	
-}
+//bool cinder_gestures_sampleApp::doubleTap( DoubleTapEvent event )
+//{
+//	// TODO: check location to make sure both taps were near the rectangle?
+//	green = !green;
+//	return false;
+//}
+//
+//bool cinder_gestures_sampleApp::singleTap( SingleTapEvent event )
+//{
+//	// TODO: check location to make sure both taps were near the rectangle?
+//	small = !small;
+//	cout << "single tapped; small = " << small << endl;
+//	return false;	
+//}
+
 
 void cinder_gestures_sampleApp::update()
 {
 	// needed for SingleTapEvents:
-	mTapAnalyzer.update();
+//	mTapAnalyzer.update();
 }
 
 void cinder_gestures_sampleApp::draw()
@@ -105,7 +108,7 @@ void cinder_gestures_sampleApp::draw()
 	gl::clear( Color( 0, 0, 0 ) ); 
 	
 	gl::pushModelView();
-	gl::multModelView( mView );
+	gl::multModelView( mRectTransform );
 	
 	float w = getWindowWidth();
 	float h = getWindowHeight();
