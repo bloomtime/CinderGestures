@@ -5,6 +5,7 @@
 #include "cinder/Ray.h"
 #include "cinder/Matrix.h"
 #include "cinder/Quaternion.h"
+#include "cinder/Camera.h"
 
 #include <ostream>
 
@@ -33,10 +34,11 @@ private:
     
 public:
 
-    PinchEvent()
+    PinchEvent(){}
+    PinchEvent(const vector<TouchEvent::Touch> &touches)
+    : mTouches(touches)
     {
     }
-    
     PinchEvent(const vector<TouchEvent::Touch> &touches, const Vec2f &t1s, const Vec2f &t2s, const Vec2f &t1p, const Vec2f &t2p, const Vec2f &screenSize)
     : mTouch1Start(t1s), mTouch2Start(t2s),
       mTouch1Prev(t1p),  mTouch2Prev(t2p),

@@ -48,7 +48,7 @@ bool PinchRecognizer::touchesBegan(TouchEvent event)
         mTouch1Prev = mTouch1Start = touches[0].getPos();
         mTouch2Prev = mTouch2Start = touches[1].getPos();
         
-        mLastDispatchedEvent = PinchEvent();
+        mLastDispatchedEvent = PinchEvent(touches);
         mCallbacksBegan.call(mLastDispatchedEvent);
         
         return true;
@@ -76,7 +76,7 @@ bool PinchRecognizer::touchesEnded(TouchEvent event)
 {
     std::vector<TouchEvent::Touch> touches = mApp->getActiveTouches();
     if(mIsPinching && touches.size() < 2){
-        mCallbacksEnded.call(PinchEvent());
+        mCallbacksEnded.call(PinchEvent(touches));
         mIsPinching = false;
         return true;
     }

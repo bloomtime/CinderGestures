@@ -8,7 +8,7 @@
 using namespace ci;
 using namespace ci::app;
 
-class pinch_sampleApp : public AppCocoaTouch {
+class pinch_camera_sampleApp : public AppCocoaTouch {
 public:
     void prepareSettings(Settings *settings);
 	void setup();
@@ -28,17 +28,17 @@ public:
 };
 
 
-void pinch_sampleApp::prepareSettings(Settings *settings)
+void pinch_camera_sampleApp::prepareSettings(Settings *settings)
 {
     settings->enableMultiTouch();
 }
 
-void pinch_sampleApp::setup()
+void pinch_camera_sampleApp::setup()
 {
 	mPinchRecognizer.init(this);
-    mPinchRecognizer.registerBegan(this, &pinch_sampleApp::onPinchBegan);
-    mPinchRecognizer.registerMoved(this, &pinch_sampleApp::onPinchMoved);
-    mPinchRecognizer.registerEnded(this, &pinch_sampleApp::onPinchEnded);
+    mPinchRecognizer.registerBegan(this, &pinch_camera_sampleApp::onPinchBegan);
+    mPinchRecognizer.registerMoved(this, &pinch_camera_sampleApp::onPinchMoved);
+    mPinchRecognizer.registerEnded(this, &pinch_camera_sampleApp::onPinchEnded);
 
     mCamera.lookAt(Vec3f(2.5,2.5,5.0), Vec3f::zero(), Vec3f::yAxis());
     mCamera.setAspectRatio(getWindowAspectRatio());
@@ -46,11 +46,11 @@ void pinch_sampleApp::setup()
     gl::enableDepthRead();
 }
 
-void pinch_sampleApp::update()
+void pinch_camera_sampleApp::update()
 {
 }
 
-void pinch_sampleApp::draw()
+void pinch_camera_sampleApp::draw()
 {
     gl::clear(Color::black());
     
@@ -70,24 +70,24 @@ void pinch_sampleApp::draw()
 }
 
 
-bool pinch_sampleApp::onPinchBegan(PinchEvent event)
+bool pinch_camera_sampleApp::onPinchBegan(PinchEvent event)
 {
     mPinchRays = event.getTouchRays(mCamera);
     return false;
 }
 
-bool pinch_sampleApp::onPinchMoved(PinchEvent event)
+bool pinch_camera_sampleApp::onPinchMoved(PinchEvent event)
 {
     mPinchRays = event.getTouchRays(mCamera);
     mMatrix = event.getTransformDelta(mCamera, mCamera.getEyePoint().distance(Vec3f::zero())) * mMatrix;
     return false;
 }
 
-bool pinch_sampleApp::onPinchEnded(PinchEvent event)
+bool pinch_camera_sampleApp::onPinchEnded(PinchEvent event)
 {
     mPinchRays.clear();
     return false;
 }
 
 
-CINDER_APP_COCOA_TOUCH( pinch_sampleApp, RendererGl )
+CINDER_APP_COCOA_TOUCH( pinch_camera_sampleApp, RendererGl )
