@@ -61,7 +61,7 @@ bool PinchRecognizer::touchesMoved(TouchEvent event)
     std::vector<TouchEvent::Touch> touches = mApp->getActiveTouches();
     if(mIsPinching && touches.size() == 2)
     {
-        mLastDispatchedEvent = PinchEvent(touches, mTouch1Start, mTouch2Start, mTouch1Prev, mTouch2Prev);
+        mLastDispatchedEvent = PinchEvent(touches, mTouch1Start, mTouch2Start, mTouch1Prev, mTouch2Prev, mApp->getWindowSize());
         mCallbacksMoved.call(mLastDispatchedEvent);
         
         mTouch1Prev = touches[0].getPos();

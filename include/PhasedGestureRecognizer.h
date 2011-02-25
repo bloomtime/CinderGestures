@@ -4,15 +4,15 @@
 
 namespace cinder { namespace app {
 
-    
+
 template<typename EventType>
 class PhasedGestureRecognizer : public GestureRecognizer {
 protected:
-    
+
     CallbackMgr<bool(EventType)> mCallbacksBegan;
     CallbackMgr<bool(EventType)> mCallbacksMoved;
     CallbackMgr<bool(EventType)> mCallbacksEnded;
-    
+
 public:
     
     template<typename T>
@@ -27,8 +27,8 @@ public:
     CallbackId registerEnded(T *obj, bool (T::*callback)(EventType)){
         return mCallbacksEnded.registerCb(std::bind1st(std::mem_fun(callback), obj));
     }
-    
+
 };
-    
-    
+
+
 } } // namespace cinder::app
