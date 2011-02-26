@@ -11,7 +11,7 @@ namespace cinder { namespace app {
 
 class PinchRecognizer : public PhasedGestureRecognizer<PinchEvent> {
 protected:
-    
+
     Vec2f mTouch1Start, mTouch2Start;
     Vec2f mTouch1Prev,  mTouch2Prev;
     

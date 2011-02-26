@@ -3,6 +3,8 @@
 #include "cinder/Matrix.h"
 #include "cinder/Rect.h"
 #include "cinder/Rand.h"
+#include "cinder/ImageIo.h"
+#include "cinder/gl/Texture.h"
 
 #include "PinchRecognizer.h"
 
@@ -19,8 +21,6 @@ public:
     bool onPinchBegan(PinchEvent event);
     bool onPinchMoved(PinchEvent event);
     bool onPinchEnded(PinchEvent event);
-    
-    PinchRecognizer mPinchRecognizer;
 
     struct TouchRect {
         Matrix44f mMatrix;
@@ -31,7 +31,7 @@ public:
             mBounds = bounds;
             mMatrix.translate(pos);
             mMatrix.rotate(Vec3f::zAxis(), rot);
-            mColor.set(CM_HSV, Vec3f(Rand::randFloat(), Rand::randFloat(), Rand::randFloat()));
+            mColor.set(CM_HSV, Vec3f(Rand::randFloat(), Rand::randFloat(), 1));
         }
 
         bool getIsHit(const TouchEvent::Touch &touch){
@@ -47,10 +47,13 @@ public:
         }
     };
     
-    TouchRect                *mPinchingRect;
+    PinchRecognizer mPinchRecognizer;
     
+    TouchRect                *mPinchingRect;
     vector<TouchRect>         mRects;
     vector<TouchEvent::Touch> mPinchTouches;
+    
+    gl::Texture mRectTex;
 };
 
 
@@ -68,10 +71,15 @@ void pinch_sampleApp::setup()
     mPinchRecognizer.registerMoved(this, &pinch_sampleApp::onPinchMoved);
     mPinchRecognizer.registerEnded(this, &pinch_sampleApp::onPinchEnded);
     
+    gl::Texture::Format format;
+    format.setMinFilter(GL_NEAREST);
+    format.setMagFilter(GL_NEAREST);
+    mRectTex = gl::Texture(loadImage(loadResource("xy.png")), format);
+    
     Rand::randomize();
     
     for(int i = 3; --i >= 0;){
-        float scale = Rand::randFloat(100, 200);
+        float scale = Rand::randFloat(150, 200);
         mRects.push_back(TouchRect(
             Rectf(-scale, -scale, scale, scale),
             Vec3f(Rand::randFloat(100, getWindowWidth() - 100), Rand::randFloat(100, getWindowWidth() - 100), 0),
@@ -92,8 +100,10 @@ void pinch_sampleApp::draw()
     
     gl::setMatricesWindow(getWindowSize(), true);
     
+    mRectTex.enableAndBind();
     for(vector<TouchRect>::iterator it = mRects.begin(); it != mRects.end(); ++it)
         it->draw();
+    mRectTex.unbind();
     
     gl::color(Color(1,0,0));
     for(vector<TouchEvent::Touch>::iterator it = mPinchTouches.begin(); it != mPinchTouches.end(); ++it)
@@ -104,7 +114,6 @@ void pinch_sampleApp::draw()
 bool pinch_sampleApp::onPinchBegan(PinchEvent event)
 {
     mPinchTouches = event.getTouches();
-    console() << mPinchTouches.size();
     for(vector<TouchRect>::reverse_iterator it = mRects.rbegin(); it != mRects.rend(); ++it){
         if(it->getIsHit(mPinchTouches[0]) && it->getIsHit(mPinchTouches[1])){
             mPinchingRect = &(*it);
