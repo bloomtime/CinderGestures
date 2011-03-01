@@ -11,16 +11,20 @@
 
 using std::vector;
 
-namespace cinder { namespace app {
+namespace cinder {
 
 
 class PinchEvent : public Event {
+public:
+    
+    struct Touch {
+        uint32_t mId;
+        Vec2f    mPosStart, mPosPrev, mPos;
+    };
+    
 private:
     
-    Vec2f mTouch1Start, mTouch2Start;
-    Vec2f mTouch1Prev,  mTouch2Prev;
-    Vec2f mTouch1,      mTouch2;
-    
+    Touch mTouch1, mTouch2;
     Vec2f mScreenSize;
     
     vector<TouchEvent::Touch> mTouches;
@@ -39,35 +43,32 @@ public:
     : mTouches(touches)
     {
     }
-    PinchEvent(const vector<TouchEvent::Touch> &touches, const Vec2f &t1s, const Vec2f &t2s, const Vec2f &t1p, const Vec2f &t2p, const Vec2f &screenSize)
-    : mTouch1Start(t1s), mTouch2Start(t2s),
-      mTouch1Prev(t1p),  mTouch2Prev(t2p),
-      mTouches(touches), mTouch1(touches[0].getPos()), mTouch2(touches[1].getPos()),
-      mScreenSize(screenSize)
+    PinchEvent(const vector<TouchEvent::Touch> &touches, const std::pair<Touch, Touch> &touchPair, const Vec2f &screenSize)
+    : mTouch1(touchPair.first), mTouch2(touchPair.second), mTouches(touches), mScreenSize(screenSize)
     {
     }
 
     Vec2f getTranslation() const {
-        return mTouch1 - mTouch1Start;
+        return mTouch1.mPos - mTouch1.mPosStart;
     }
     Vec2f getTranslationDelta() const {
-        return mTouch1 - mTouch1Prev;
+        return mTouch1.mPos - mTouch1.mPosPrev;
     }
 
     float getRotation() const {
-        return math<float>::atan2(mTouch2.y - mTouch1.y, mTouch2.x - mTouch1.x)
-             - math<float>::atan2(mTouch2Start.y - mTouch1Start.y, mTouch2Start.x - mTouch1Start.x);
+        return math<float>::atan2(mTouch2.mPos.y - mTouch1.mPos.y, mTouch2.mPos.x - mTouch1.mPos.x)
+             - math<float>::atan2(mTouch2.mPosStart.y - mTouch1.mPosStart.y, mTouch2.mPosStart.x - mTouch1.mPosStart.x);
     }
     float getRotationDelta() const {
-        return math<float>::atan2(mTouch2.y - mTouch1.y, mTouch2.x - mTouch1.x)
-             - math<float>::atan2(mTouch2Prev.y - mTouch1Prev.y, mTouch2Prev.x - mTouch1Prev.x);
+        return math<float>::atan2(mTouch2.mPos.y - mTouch1.mPos.y, mTouch2.mPos.x - mTouch1.mPos.x)
+             - math<float>::atan2(mTouch2.mPosPrev.y - mTouch1.mPosPrev.y, mTouch2.mPosPrev.x - mTouch1.mPosPrev.x);
     }
 
     float getScale() const {
-        return mTouch1.distance(mTouch2) / mTouch1Start.distance(mTouch2Start);
+        return mTouch1.mPos.distance(mTouch2.mPos) / mTouch1.mPosStart.distance(mTouch2.mPosStart);
     }
     float getScaleDelta() const {
-        return mTouch1.distance(mTouch2) / mTouch1Prev.distance(mTouch2Prev);
+        return mTouch1.mPos.distance(mTouch2.mPos) / mTouch1.mPosPrev.distance(mTouch2.mPosPrev);
     }
     
     const vector<TouchEvent::Touch>& getTouches() const {
@@ -88,10 +89,10 @@ public:
         float scale = getScale();
 
         Matrix44f mtx;
-        mtx.translate(Vec3f(mTouch1, 0.0f));
+        mtx.translate(Vec3f(mTouch1.mPos, 0.0f));
         mtx.rotate(Vec3f::zAxis(), getRotation());
         mtx.scale(Vec3f(scale, scale, scale));
-        mtx.translate(Vec3f(getTranslation() - mTouch1, 0.0f));
+        mtx.translate(Vec3f(getTranslation() - mTouch1.mPos, 0.0f));
         return mtx;
     }
                    
@@ -100,17 +101,17 @@ public:
         float scale = getScaleDelta();
         
         Matrix44f mtx;
-        mtx.translate(Vec3f(mTouch1, 0.0f));
+        mtx.translate(Vec3f(mTouch1.mPos, 0.0f));
         mtx.rotate(Vec3f::zAxis(), getRotationDelta());
         mtx.scale(Vec3f(scale, scale, scale));
-        mtx.translate(Vec3f(getTranslationDelta() - mTouch1, 0.0f));
+        mtx.translate(Vec3f(getTranslationDelta() - mTouch1.mPos, 0.0f));
         return mtx;
     }
     
     Matrix44f getTransformDelta(const Camera &cam, float depth)
     {
-        Ray t1Ray  = cam.generateRay(mTouch1.x / mScreenSize.x, 1.0f - mTouch1.y / mScreenSize.y, cam.getAspectRatio());
-        Ray t1pRay = cam.generateRay(mTouch1Prev.x / mScreenSize.x, 1.0f - mTouch1Prev.y / mScreenSize.y, cam.getAspectRatio());
+        Ray t1Ray  = cam.generateRay(mTouch1.mPos.x / mScreenSize.x, 1.0f - mTouch1.mPos.y / mScreenSize.y, cam.getAspectRatio());
+        Ray t1pRay = cam.generateRay(mTouch1.mPosPrev.x / mScreenSize.x, 1.0f - mTouch1.mPosPrev.y / mScreenSize.y, cam.getAspectRatio());
         Vec3f planeOrigin(cam.getEyePoint() + cam.getViewDirection() * depth);
         Vec3f planeNormal(cam.getViewDirection() * -1.0f);
         Vec3f t1Pos  = calcRayPlaneIntersection(t1Ray, planeOrigin, planeNormal);
@@ -129,4 +130,4 @@ public:
 };
 
                       
-} } // namespace cinder::app
+} // namespace cinder

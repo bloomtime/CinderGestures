@@ -2,7 +2,7 @@
 
 #include "GestureRecognizer.h"
 
-namespace cinder { namespace app {
+namespace cinder {
 
 
 template<typename EventType>
@@ -14,6 +14,8 @@ protected:
     CallbackMgr<bool(EventType)> mCallbacksEnded;
 
 public:
+    
+    PhasedGestureRecognizer() : GestureRecognizer() {}
     
     template<typename T>
     CallbackId registerBegan(T *obj, bool (T::*callback)(EventType)){
@@ -31,4 +33,4 @@ public:
 };
 
 
-} } // namespace cinder::app
+} // namespace cinder::app

@@ -13,7 +13,7 @@
 #include "DoubleTapEvent.h"
 #include "SingleTapEvent.h"
 
-namespace cinder { namespace app {
+namespace cinder {
 
 	class TapRecognizer : public GestureRecognizer {
 
@@ -102,4 +102,4 @@ namespace cinder { namespace app {
 		return false;
 	}
 	
-} }
+} // namespace cinder

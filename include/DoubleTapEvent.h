@@ -11,7 +11,7 @@
 #include <vector>
 #include "cinder/app/TouchEvent.h"
 
-namespace cinder { namespace app {
+namespace cinder {
 
 class DoubleTapEvent : public Event {
 
@@ -33,4 +33,4 @@ public:
 	}
 };
 
-} }
+} // namespace cinder

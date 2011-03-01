@@ -7,12 +7,14 @@
 #include "cinder/app/AppBasic.h"
 #endif
 
-namespace cinder { namespace app {
+using namespace ci::app;
+
+namespace cinder {
 
     
 class GestureRecognizer {
 protected:
-    
+
 #if defined (CINDER_COCOA_TOUCH)
     typedef AppCocoaTouch AppType;
 #else
@@ -21,7 +23,7 @@ protected:
     
     // your Cinder App (usually passed in as 'this' in setup)
     AppType *mApp;
-            
+
     // subclasses must handle basic touch events from mApp...
     virtual bool touchesBegan(TouchEvent event) = 0;
     virtual bool touchesMoved(TouchEvent event) = 0;
@@ -48,9 +50,9 @@ protected:
     }
             
 public:		
-    
+
     GestureRecognizer() : mApp(0) {}
-    
+
     ~GestureRecognizer(){
         unregisterTouchCallbacks();
     }
@@ -65,4 +67,4 @@ public:
 };
 	
     
-} } // namespace cinder::app
+} // namespace cinder::app
