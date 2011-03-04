@@ -27,6 +27,7 @@ protected:
     
     void beginPinch(const TouchEvent::Touch &t1, const TouchEvent::Touch &t2)
     {
+        mLastTouchId = 0;
         mIsPinching = true;
         
         PinchEvent::Touch pt1 = { t1.getId(), t1.getPos(), t1.getPos(), t1.getPos() };
