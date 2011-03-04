@@ -27,7 +27,7 @@ private:
     Touch mTouch1, mTouch2;
     Vec2f mScreenSize;
     
-    vector<TouchEvent::Touch> mTouches;
+    vector<Touch> mTouches;
     
     static Vec3f calcRayPlaneIntersection(const Ray &ray, const Vec3f &planeOrigin, const Vec3f &planeNormal)
     {
@@ -39,13 +39,11 @@ private:
 public:
 
     PinchEvent(){}
-    PinchEvent(const vector<TouchEvent::Touch> &touches)
-    : mTouches(touches)
+    PinchEvent(const std::pair<Touch, Touch> &touchPair, const Vec2f &screenSize)
+    : mTouch1(touchPair.first), mTouch2(touchPair.second), mScreenSize(screenSize)
     {
-    }
-    PinchEvent(const vector<TouchEvent::Touch> &touches, const std::pair<Touch, Touch> &touchPair, const Vec2f &screenSize)
-    : mTouch1(touchPair.first), mTouch2(touchPair.second), mTouches(touches), mScreenSize(screenSize)
-    {
+        mTouches.push_back(mTouch1);
+        mTouches.push_back(mTouch2);
     }
 
     Vec2f getTranslation() const {
@@ -71,16 +69,14 @@ public:
         return mTouch1.mPos.distance(mTouch2.mPos) / mTouch1.mPosPrev.distance(mTouch2.mPosPrev);
     }
     
-    const vector<TouchEvent::Touch>& getTouches() const {
+    const vector<Touch>& getTouches() const {
         return mTouches;
     }
     
     vector<Ray> getTouchRays(const Camera &cam) const {
         vector<Ray> touch_rays;
-        for(vector<TouchEvent::Touch>::const_iterator it = mTouches.begin(); it != mTouches.end(); ++it){
-            Vec2f pos = it->getPos();
-            touch_rays.push_back(cam.generateRay(pos.x / mScreenSize.x, 1.0f - pos.y / mScreenSize.y, cam.getAspectRatio()));
-        }
+        touch_rays.push_back(cam.generateRay(mTouch1.mPos.x / mScreenSize.x, 1.0f - mTouch1.mPos.y / mScreenSize.y, cam.getAspectRatio()));
+        touch_rays.push_back(cam.generateRay(mTouch2.mPos.x / mScreenSize.x, 1.0f - mTouch2.mPos.y / mScreenSize.y, cam.getAspectRatio()));
         return touch_rays;
     }
     
