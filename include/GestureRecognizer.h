@@ -7,6 +7,8 @@
 #include "cinder/app/AppBasic.h"
 #endif
 
+#include <set>
+
 using namespace ci::app;
 
 namespace cinder {
@@ -35,6 +37,7 @@ protected:
     CallbackId mTouchesEndedCb;
     
     std::function<bool(TouchEvent::Touch)> mKeepTouchCb;
+    std::set<uint32_t>                     mKeptTouchIds;
     
     bool privateTouchesBegan(TouchEvent event){
         // Allow the Recognizer to Keep/Reject touches.
@@ -42,8 +45,10 @@ protected:
         if(mKeepTouchCb){
             std::vector<TouchEvent::Touch> touchList;
             for(std::vector<TouchEvent::Touch>::const_iterator it = event.getTouches().begin(); it != event.getTouches().end(); ++it){
-                if(mKeepTouchCb(*it))
+                if(mKeepTouchCb(*it)){
                     touchList.push_back(*it);
+                    mKeptTouchIds.insert(it->getId());
+                }
             }
             if(touchList.size() > 0)
                 return touchesBegan(TouchEvent(touchList));
@@ -52,11 +57,41 @@ protected:
         return touchesBegan(event);
     }
     
+    bool privateTouchesMoved(TouchEvent event){
+        if(mKeepTouchCb){
+            std::vector<TouchEvent::Touch> touchList;
+            for(std::vector<TouchEvent::Touch>::const_iterator it = event.getTouches().begin(); it != event.getTouches().end(); ++it){
+                if(mKeptTouchIds.count(it->getId()) != 0)
+                    touchList.push_back(*it);
+            }
+            if(touchList.size() > 0)
+                return touchesMoved(TouchEvent(touchList));
+            return false;
+        }
+        return touchesMoved(event);
+    }
+    
+    bool privateTouchesEnded(TouchEvent event){
+        if(mKeepTouchCb){
+            std::vector<TouchEvent::Touch> touchList;
+            for(std::vector<TouchEvent::Touch>::const_iterator it = event.getTouches().begin(); it != event.getTouches().end(); ++it){
+                if(mKeptTouchIds.count(it->getId()) != 0){
+                    touchList.push_back(*it);
+                    mKeptTouchIds.erase(it->getId());
+                }
+            }
+            if(touchList.size() > 0)
+                return touchesEnded(TouchEvent(touchList));
+            return false;
+        }
+        return touchesEnded(event);
+    }
+    
     void registerTouchCallbacks(){
         if(mApp){
             mTouchesBeganCb = mApp->registerTouchesBegan(this, &GestureRecognizer::privateTouchesBegan);
-            mTouchesMovedCb = mApp->registerTouchesMoved(this, &GestureRecognizer::touchesMoved);
-            mTouchesEndedCb = mApp->registerTouchesEnded(this, &GestureRecognizer::touchesEnded);
+            mTouchesMovedCb = mApp->registerTouchesMoved(this, &GestureRecognizer::privateTouchesMoved);
+            mTouchesEndedCb = mApp->registerTouchesEnded(this, &GestureRecognizer::privateTouchesEnded);
         }
     }
     void unregisterTouchCallbacks(){

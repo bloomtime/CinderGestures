@@ -37,7 +37,7 @@ namespace cinder {
 
 	public:		
 		
-		void init(AppBasic *app) {
+		void init(AppType *app) {
 			GestureRecognizer::init(app);
 			wasSingleTapped = false;
 			prevTouchPos = Vec2f(0,0);
