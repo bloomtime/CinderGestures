@@ -23,7 +23,7 @@ protected:
     
     // your Cinder App (usually passed in as 'this' in setup)
     AppType *mApp;
-
+    
     // subclasses must handle basic touch events from mApp...
     virtual bool touchesBegan(TouchEvent event) = 0;
     virtual bool touchesMoved(TouchEvent event) = 0;
@@ -34,9 +34,27 @@ protected:
     CallbackId mTouchesMovedCb;
     CallbackId mTouchesEndedCb;
     
+    std::function<bool(TouchEvent::Touch)> mKeepTouchCb;
+    
+    bool privateTouchesBegan(TouchEvent event){
+        // Allow the Recognizer to Keep/Reject touches.
+        // If no touches are kept then the event is not fired and we defer to the next listener.
+        if(mKeepTouchCb){
+            std::vector<TouchEvent::Touch> touchList;
+            for(std::vector<TouchEvent::Touch>::const_iterator it = event.getTouches().begin(); it != event.getTouches().end(); ++it){
+                if(mKeepTouchCb(*it))
+                    touchList.push_back(*it);
+            }
+            if(touchList.size() > 0)
+                return touchesBegan(TouchEvent(touchList));
+            return false;
+        }
+        return touchesBegan(event);
+    }
+    
     void registerTouchCallbacks(){
         if(mApp){
-            mTouchesBeganCb = mApp->registerTouchesBegan(this, &GestureRecognizer::touchesBegan);
+            mTouchesBeganCb = mApp->registerTouchesBegan(this, &GestureRecognizer::privateTouchesBegan);
             mTouchesMovedCb = mApp->registerTouchesMoved(this, &GestureRecognizer::touchesMoved);
             mTouchesEndedCb = mApp->registerTouchesEnded(this, &GestureRecognizer::touchesEnded);
         }
@@ -62,6 +80,11 @@ public:
         unregisterTouchCallbacks();
         mApp = app;
         registerTouchCallbacks();
+    }
+    
+    template<typename T>
+    void setKeepTouchCallback(T *obj, bool(T::*callback)(TouchEvent::Touch)){
+        mKeepTouchCb = std::bind1st(std::mem_fun(callback), obj);
     }
 
 };

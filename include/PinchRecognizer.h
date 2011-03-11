@@ -69,10 +69,10 @@ bool PinchRecognizer::touchesBegan(TouchEvent event)
                 for(vector<TouchEvent::Touch>::const_iterator it = active.begin(); it != active.end(); ++it){
                     if(it->getId() == mLastTouchId){
                         beginPinch(*it, touches[0]);
-                        break;
+                        mLastTouchId = 0;
+                        return true;
                     }
                 }
-                mLastTouchId = 0;
             }
             else{
                 mLastTouchId = touches[0].getId();
@@ -80,6 +80,7 @@ bool PinchRecognizer::touchesBegan(TouchEvent event)
         }
         else if(touches.size() == 2){
             beginPinch(touches[0], touches[1]);
+            return true;
         }
     }
     return false;

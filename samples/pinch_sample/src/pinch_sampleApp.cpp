@@ -16,16 +16,11 @@ public:
 	void update();
 	void draw();
     
-//    bool onPinchBegan(PinchEvent event);
-//    bool onPinchMoved(PinchEvent event);
-//    bool onPinchEnded(PinchEvent event);
-    
     vector<TouchRect*>        mRects;
     vector<TouchEvent::Touch> mPinchTouches;
     
     gl::Texture mRectTex;
 };
-
 
 void pinch_sampleApp::prepareSettings(Settings *settings)
 {
@@ -62,30 +57,10 @@ void pinch_sampleApp::draw()
     gl::setMatricesWindow(getWindowSize(), true);
     
     mRectTex.enableAndBind();
-    for(vector<TouchRect*>::iterator it = mRects.begin(); it != mRects.end(); ++it)
+    for(vector<TouchRect*>::reverse_iterator it = mRects.rbegin(); it != mRects.rend(); ++it)
         (*it)->draw();
     mRectTex.unbind();
-    
-//    gl::color(Color(1,0,0));
-//    for(vector<TouchEvent::Touch>::iterator it = mPinchTouches.begin(); it != mPinchTouches.end(); ++it)
-//        gl::drawSolidCircle(it->getPos(), 30);
 }
-
-
-//bool pinch_sampleApp::onPinchBegan(PinchEvent event)
-//{
-//    return false;
-//}
-//
-//bool pinch_sampleApp::onPinchMoved(PinchEvent event)
-//{
-//    return false;
-//}
-//
-//bool pinch_sampleApp::onPinchEnded(PinchEvent event)
-//{
-//    return false;
-//}
 
 
 CINDER_APP_COCOA_TOUCH( pinch_sampleApp, RendererGl )
