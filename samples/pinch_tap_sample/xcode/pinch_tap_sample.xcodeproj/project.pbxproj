@@ -33,6 +33,8 @@
 		32CA4F630368D1EE00C91783 /* pinch_tap_sample_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pinch_tap_sample_Prefix.pch; sourceTree = "<group>"; };
 		43CD9798123D6504003B628E /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Icon.png; path = ../resources/Icon.png; sourceTree = SOURCE_ROOT; };
 		8D1107310486CEB800E47090 /* pinch_tap_sample-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "pinch_tap_sample-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
+		943BA5B0132B032600E6E043 /* SwipeRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SwipeRecognizer.h; sourceTree = "<group>"; };
+		943BA5B2132B040900E6E043 /* SwipeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SwipeEvent.h; sourceTree = "<group>"; };
 		946D2D20132AD77000FBC139 /* DoubleTapEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DoubleTapEvent.h; sourceTree = "<group>"; };
 		946D2D21132AD77000FBC139 /* GestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GestureRecognizer.h; sourceTree = "<group>"; };
 		946D2D22132AD77000FBC139 /* PhasedGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhasedGestureRecognizer.h; sourceTree = "<group>"; };
@@ -168,6 +170,8 @@
 				946D2D22132AD77000FBC139 /* PhasedGestureRecognizer.h */,
 				946D2D23132AD77000FBC139 /* PinchEvent.h */,
 				946D2D24132AD77000FBC139 /* PinchRecognizer.h */,
+				943BA5B2132B040900E6E043 /* SwipeEvent.h */,
+				943BA5B0132B032600E6E043 /* SwipeRecognizer.h */,
 				946D2D25132AD77000FBC139 /* SingleTapEvent.h */,
 				946D2D26132AD77000FBC139 /* TapRecognizer.h */,
 			);

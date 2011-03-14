@@ -54,7 +54,7 @@ void pinch_tap_sampleApp::draw()
 {
     gl::clear(Color::black());
     
-    gl::setMatricesWindowPersp(getWindowSize());
+    gl::setMatricesWindowPersp(getWindowSize(), 60, 1, 2000);
     
     mRectTex.enableAndBind();
     for(vector<TouchRect*>::reverse_iterator it = mRects.rbegin(); it != mRects.rend(); ++it)
