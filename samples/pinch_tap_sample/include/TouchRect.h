@@ -21,6 +21,7 @@ public:
     Rectf     mBounds;
     Color     mColor;
     
+    float     mGlow;
     float     mFlipRotation, mFlipRotationGoal;
     bool      mIsPinching;
     
@@ -43,6 +44,11 @@ public:
         return false;
     }
     
+    bool singleTapped(SingleTapEvent event)
+    {
+        mGlow = 1.0f;
+        return true;
+    }
     bool doubleTapped(DoubleTapEvent event)
     {
         mFlipRotationGoal = mFlipRotationGoal > 0 ? 0 : M_PI;
@@ -55,22 +61,24 @@ public:
     }
     
     TouchRect(app::AppCocoaTouch *app, const Rectf &bounds, const Vec3f &pos, float rot)
-    : mIsPinching(false), mFlipRotation(0), mFlipRotationGoal(0)
+    : mIsPinching(false), mFlipRotation(0), mFlipRotationGoal(0), mGlow(0)
     {
         mBounds = bounds;
         mMatrix.translate(pos);
         mMatrix.rotate(Vec3f::zAxis(), rot);
         mColor.set(CM_HSV, Vec3f(Rand::randFloat(), Rand::randFloat(), 1));
         
-        mTapRecognizer.init(app);
-        mTapRecognizer.registerDoubleTap(this, &TouchRect::doubleTapped);
-        mTapRecognizer.setKeepTouchCallback(this, &TouchRect::getIsHit);
-        
         mPinchRecognizer.init(app);
         mPinchRecognizer.registerBegan(this, &TouchRect::pinchBegan);
         mPinchRecognizer.registerMoved(this, &TouchRect::pinchMoved);
         mPinchRecognizer.registerEnded(this, &TouchRect::pinchEnded);
         mPinchRecognizer.setKeepTouchCallback(this, &TouchRect::getIsHit);
+        
+        // Tap Recognizer must register last in order to not block touches from the Pinch Recognizer
+        mTapRecognizer.init(app);
+        mTapRecognizer.registerSingleTap(this, &TouchRect::singleTapped);
+        mTapRecognizer.registerDoubleTap(this, &TouchRect::doubleTapped);
+        mTapRecognizer.setKeepTouchCallback(this, &TouchRect::getIsHit);
     }
     
     void draw()
@@ -78,9 +86,11 @@ public:
         mFlipRotation = lerp(mFlipRotation, mFlipRotationGoal, 0.1f);
         gl::pushModelView();
         gl::multModelView(mMatrix * Matrix44f::createRotation(Vec3f::yAxis(), mFlipRotation));
-        gl::color(mColor);
+        gl::color(mColor - (Color(1,1,1) * mGlow));
         gl::drawSolidRect(mBounds);
         gl::popModelView();
+        
+        mGlow *= 0.9f;
     }
 
 };
