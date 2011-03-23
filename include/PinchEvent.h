@@ -69,6 +69,10 @@ public:
         return mTouch1.mPos.distance(mTouch2.mPos) / mTouch1.mPosPrev.distance(mTouch2.mPosPrev);
     }
     
+    Vec2f getCenter() const {
+        return mTouch1.mPos.lerp(0.5f, mTouch2.mPos);
+    }
+    
     const vector<Touch>& getTouches() const {
         return mTouches;
     }
