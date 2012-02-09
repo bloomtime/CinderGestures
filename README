@@ -32,8 +32,7 @@ Other event support is really just sketched out, we had plans for:
 
 To add this lib to an existing git-managed Cinder project do:
 
-git submodule add git@github.com:bloomtime/CinderGestures.git
-blocks/CinderGestures
+git submodule add git@github.com:bloomtime/CinderGestures.git blocks/CinderGestures
 
 And then add the relevant folders (include) to your project. Don't add the
 samples folder (I just add  everything and then remove the irrelevant bits).
