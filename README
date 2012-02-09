@@ -1,5 +1,35 @@
-To add this to a git project do:
+Andrew, Hai, Chris: this is a library Ryan and I were working on for a while. The pinch stuff is most 
+well thought out, and includes a mechanism for listeners to say whether they claim a point or not.
+
+The pinch stuff includes support for projecting pinches onto a sphere for manipulating a 3D camera,
+which is probably of interest as it might save you some time if you try to do something similar. The 
+2D pinch stuff here is more straight forward and is a variation of the map-specific stuff in the
+https://github.com/randomEtc/modestmaps-cinder project.
+
+The double-tap stuff can/should probably be adapted to use the new Cinder Timeline support. The issue
+is that you probably want to suppress the reporting of single-tap events until a double-tap has fired
+(with e.g. a ~200ms delay). This means re-working apps that already support single-tap before you can
+use double-tap.
+
+Other event support is really just sketched out, we had plans for:
+
+* double tap / single tap
+* two-finger tap
+* two-finger double tap
+* tap and hold
+* pinch/spread (zoom out, zoom in) (2+ fingers?)
+* 3 finger pinch (gather?)
+* two-finger rotation
+* three+ finger twist
+* one/two/three/four finger swipe
+* palm print :)
+* full multi-touch transform (a la modestmaps, with optional rotation)
+
+...
+
+To add this lib to an existing git-managed Cinder project do:
 
 git submodule add git@github.com:bloomtime/CinderGestures.git blocks/CinderGestures
 
-And then add the relevant folders (include) to your project. Don't add the samples folder (I just add everything and then remove the irrelevant bits).
+And then add the relevant folders (include) to your project. Don't add the samples folder (I just add 
+everything and then remove the irrelevant bits).
