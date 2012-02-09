@@ -16,12 +16,19 @@ double-tap.
 
 Other event support is really just sketched out, we had plans for:
 
-* double tap / single tap two-finger tap two-finger double tap tap and hold
-* pinch/spread (zoom out, zoom in) (2+ fingers?) 3 finger pinch (gather?) two-
-* finger rotation three+ finger twist one/two/three/four finger swipe palm print
-* :) full multi-touch transform (a la modestmaps, with optional rotation)
+* double tap / single tap 
+* two-finger tap 
+* two-finger double tap 
+* tap and hold
+* pinch/spread (zoom out, zoom in) (2+ fingers?) 
+* 3 finger pinch (gather?) 
+* two-finger rotation 
+* three+ finger twist 
+* one/two/three/four finger swipe 
+* palm print :) 
+* full multi-touch transform (a la modestmaps, with optional rotation)
 
-
+...
 
 To add this lib to an existing git-managed Cinder project do:
 
